@@ -1,38 +1,33 @@
+// models/HasilTestJaringan.js
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 const User = require("./User");
 
 const HasilTestJaringan = sequelize.define("HasilTestJaringan", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  // Data Induk
-  pln_up3: DataTypes.STRING(50),
-  nama_pekerjaan: DataTypes.STRING(150),
-  nama_pelanggan: DataTypes.STRING(150),
-  lokasi: DataTypes.TEXT, // Lokasi bisa panjang, TEXT lebih aman
-  ULP: DataTypes.STRING(50),
-  gardu_induk: DataTypes.STRING(100),
-  tanggal_test: DataTypes.DATEONLY, // Hanya tanggal, lebih efisien
-  tanggal_oprasi: DataTypes.DATEONLY, // Hanya tanggal, lebih efisien
-  pelaksana: DataTypes.STRING(100),
-  spk_sutm: DataTypes.STRING(100),
-  spk_sutr: DataTypes.STRING(100),
-  spk_gtt: DataTypes.STRING(100),
-  penyulang: DataTypes.STRING(100),
-  no_gtt: DataTypes.STRING(100),
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  userId: { type: DataTypes.INTEGER, allowNull: false },
 
-  // Jaringan SUTR - Jurusan 1 (dan 2, 3) - Menggunakan tipe data numerik
-  sutrJenisConductor1: DataTypes.STRING(50),
+  // Data Umum
+  plnUp3: DataTypes.STRING,
+  namaPekerjaan: DataTypes.STRING,
+  namaPelanggan: DataTypes.STRING,
+  lokasiAlamat: DataTypes.TEXT,
+  ulp: DataTypes.STRING,
+  garduInduk: DataTypes.STRING,
+  tanggalTest: DataTypes.DATEONLY,
+  tanggalOperasi: DataTypes.DATEONLY,
+  pelaksana: DataTypes.STRING,
+  spkSutm: DataTypes.STRING,
+  spkSutr: DataTypes.STRING,
+  spkGtt: DataTypes.STRING,
+  penyulang: DataTypes.STRING,
+  noGtt: DataTypes.STRING,
+
+  // Jaringan SUTR
+  sutrJenisLine1: DataTypes.STRING,
+  sutrJenisConductor1: DataTypes.STRING,
   sutrUkuran1: DataTypes.FLOAT,
   sutrPanjang1: DataTypes.FLOAT,
-  sutrJenisLine1: DataTypes.STRING(50),
   sutrRN1: DataTypes.FLOAT,
   sutrSN1: DataTypes.FLOAT,
   sutrTN1: DataTypes.FLOAT,
@@ -41,11 +36,9 @@ const HasilTestJaringan = sequelize.define("HasilTestJaringan", {
   sutrST1: DataTypes.FLOAT,
   sutrNBody1: DataTypes.FLOAT,
 
-  // Jaringan SUTR - Jurusan 2
-  sutrJenisConductor2: DataTypes.STRING(50),
+  sutrJenisConductor2: DataTypes.STRING,
   sutrUkuran2: DataTypes.FLOAT,
   sutrPanjang2: DataTypes.FLOAT,
-  sutrJenisLine2: DataTypes.STRING(50),
   sutrRN2: DataTypes.FLOAT,
   sutrSN2: DataTypes.FLOAT,
   sutrTN2: DataTypes.FLOAT,
@@ -54,11 +47,9 @@ const HasilTestJaringan = sequelize.define("HasilTestJaringan", {
   sutrST2: DataTypes.FLOAT,
   sutrNBody2: DataTypes.FLOAT,
 
-  // Jaringan SUTR - Jurusan 3
-  sutrJenisConductor3: DataTypes.STRING(50),
+  sutrJenisConductor3: DataTypes.STRING,
   sutrUkuran3: DataTypes.FLOAT,
   sutrPanjang3: DataTypes.FLOAT,
-  sutrJenisLine3: DataTypes.STRING(50),
   sutrRN3: DataTypes.FLOAT,
   sutrSN3: DataTypes.FLOAT,
   sutrTN3: DataTypes.FLOAT,
@@ -68,7 +59,7 @@ const HasilTestJaringan = sequelize.define("HasilTestJaringan", {
   sutrNBody3: DataTypes.FLOAT,
 
   // Jaringan SUTM
-  sutmJenisConductor: DataTypes.STRING(50),
+  sutmJenisConductor: DataTypes.STRING,
   sutmUkuran: DataTypes.FLOAT,
   sutmPanjang: DataTypes.FLOAT,
   sutmRG: DataTypes.FLOAT,
@@ -78,31 +69,29 @@ const HasilTestJaringan = sequelize.define("HasilTestJaringan", {
   sutmRT: DataTypes.FLOAT,
   sutmST: DataTypes.FLOAT,
 
-  // Transfomator
-  putaranPhasa: DataTypes.STRING(50),
-  pabrikMerk: DataTypes.STRING(100),
+  // Transformator
+  putaranPhasa: DataTypes.STRING,
+  pabrikMerk: DataTypes.STRING,
   dayaNominal: DataTypes.FLOAT,
-  noSeri: DataTypes.STRING(100),
-  hubungan: DataTypes.STRING(50),
+  noSeri: DataTypes.STRING,
+  hubungan: DataTypes.STRING,
   tegHubSingkat: DataTypes.FLOAT,
   tegPrimer: DataTypes.FLOAT,
   tegSekunder: DataTypes.FLOAT,
   arusPrimer: DataTypes.FLOAT,
   arusNom: DataTypes.FLOAT,
   frekuensi: DataTypes.FLOAT,
-  tahunPembuatan: DataTypes.STRING(10),
-  pendinginMinyak: DataTypes.STRING(50),
+  tahunPembuatan: DataTypes.STRING,
+  pendinginMinyak: DataTypes.STRING,
   beratMinyak: DataTypes.FLOAT,
   beratTotal: DataTypes.FLOAT,
   posSadapan: DataTypes.FLOAT,
 
-  // Tahanan Isolasi Transformator
+  // Tahanan Isolasi & Tegangan Rendah
   tahananPrimerBody: DataTypes.FLOAT,
   tahananSekunderBody: DataTypes.FLOAT,
   tahananPrimerPrimer: DataTypes.FLOAT,
   tahananSekunderSekunder: DataTypes.FLOAT,
-
-  // Tegangan rendah
   teganganRN: DataTypes.FLOAT,
   teganganSN: DataTypes.FLOAT,
   teganganTN: DataTypes.FLOAT,
@@ -110,7 +99,7 @@ const HasilTestJaringan = sequelize.define("HasilTestJaringan", {
   teganganRT: DataTypes.FLOAT,
   teganganST: DataTypes.FLOAT,
 
-  // Tahanan Isolasi Arrester & Pentanahan
+  // Arrester & Pentanahan
   tahananArresterRG: DataTypes.FLOAT,
   tahananArresterSG: DataTypes.FLOAT,
   tahananArresterTG: DataTypes.FLOAT,
@@ -118,18 +107,23 @@ const HasilTestJaringan = sequelize.define("HasilTestJaringan", {
   pentanahanArusBocorNetral: DataTypes.FLOAT,
   pentanahanArrester: DataTypes.FLOAT,
   pentanahanArusBocorArrester: DataTypes.FLOAT,
+  pentanahanBody: DataTypes.FLOAT,
 
-  // Catatan dan Petugas
-  catatan: DataTypes.TEXT, // Catatan adalah kandidat terbaik untuk TEXT
-  petugasPLN: DataTypes.STRING(100),
-  pelaksanaPetugas: DataTypes.STRING(100),
+  // Catatan & Petugas
+  catatan: DataTypes.TEXT,
+  petugasPLN: {
+    type: DataTypes.JSON, // simpan array ["Petugas 1", "Petugas 2"]
+    defaultValue: [],
+  },
+  pelaksanaPetugas: DataTypes.STRING,
+  
+  //lampiranFoto: {
+    //type: DataTypes.JSON, // simpan array ["url1", "url2"]
+    //defaultValue: [],
+  //},
 
-}, {
-  tableName: "Hasil_Oprasian_Jaringan",
 });
 
-// Relasi: user 1-n laporan
-User.hasMany(HasilTestJaringan, { foreignKey: "userId" });
 HasilTestJaringan.belongsTo(User, { foreignKey: "userId" });
 
 module.exports = HasilTestJaringan;

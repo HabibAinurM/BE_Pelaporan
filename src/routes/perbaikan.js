@@ -1,11 +1,13 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const perbaikanController = require ("../controllers/perbaikanController");
-const { authMiddleware } = require("../middleware/authMiddleware");
-// Buat perbaikan baru
-router.post("/", authMiddleware, perbaikanController.createPerbaikan);
+const {
+  createPerbaikan,
+  getPerbaikanByLaporan,
+  getAllPerbaikan,
+} = require("../controllers/perbaikanController");
 
-// Ambil semua perbaikan
-router.get("/", authMiddleware, perbaikanController.getPerbaikans);
+router.get("/", getAllPerbaikan);
+router.get("/:laporan_id", getPerbaikanByLaporan);
+router.post("/", createPerbaikan);
 
 module.exports = router;

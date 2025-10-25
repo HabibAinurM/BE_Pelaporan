@@ -1,49 +1,57 @@
-const Perbaikan = require("../models/Perbaikan"); // HANYA SEKALI
+const Perbaikan = require("../models/Perbaikan");
 const Laporan = require("../models/Laporan");
-const User = require("../models/User");
 
-// Hapus: const Perbaikan = require('../models/Perbaikan'); 
-// Baris ini yang menyebabkan error
-
-// Tambah perbaikan baru
+// POST /api/perbaikan
 exports.createPerbaikan = async (req, res) => {
   try {
-    // Pastikan req.user.id sudah tersedia dari authMiddleware
-    const { laporanId, jenisPerbaikan, detail } = req.body;
-    const userId = req.user.id; // ambil dari token login
+    const { laporan_id, jenis_perbaikan, kapasitas, daftar_trafo } = req.body;
 
-    const laporan = await Laporan.findByPk(laporanId);
-    if (!laporan) {
-      return res.status(404).json({ message: "Laporan tidak ditemukan" });
+    // Validasi
+    if (!laporan_id || !jenis_perbaikan) {
+      return res.status(400).json({ message: "laporan_id dan jenis_perbaikan wajib diisi." });
     }
 
+    // Buat record perbaikan
     const perbaikan = await Perbaikan.create({
-      laporanId,
-      userId,
-      jenisPerbaikan,
-      detail
+      laporan_id,
+      jenis_perbaikan,
+      kapasitas: jenis_perbaikan === "gantiTrafoMobile" ? kapasitas : null,
+      daftar_trafo: jenis_perbaikan === "kopelTrafoSebelah" ? daftar_trafo : null,
     });
 
-    res.status(201).json({ message: "Perbaikan berhasil ditambahkan", perbaikan });
-  } catch (error) {
-    console.error("Error creating perbaikan:", error);
-    res.status(500).json({ message: "Gagal menambahkan perbaikan", error: error.message });
+    // Update status laporan
+    await Laporan.update(
+      { status: "Dalam Perbaikan" },
+      { where: { id: laporan_id } }
+    );
+
+    res.status(201).json({
+      message: "Perbaikan berhasil disimpan.",
+      data: perbaikan,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
 
-// Lihat semua perbaikan
-exports.getPerbaikans = async (req, res) => {
+// GET /api/perbaikan/:laporan_id
+exports.getPerbaikanByLaporan = async (req, res) => {
   try {
-    const perbaikans = await Perbaikan.findAll({
-      // Pastikan 'user' dan 'laporan' sudah didefinisikan sebagai alias di model
-      include: [
-        { model: User, as: "user", attributes: ["id", "username", "email"] }, // Menggunakan 'username' alih-alih 'name' jika User model hanya punya 'username'
-        { model: Laporan, as: "laporan", attributes: ["id", "garduInduk", "penyulang"] } // Mengambil atribut yang relevan dari Laporan
-      ]
-    });
-    res.json(perbaikans);
-  } catch (error) {
-    console.error("Error getting perbaikans:", error);
-    res.status(500).json({ message: "Gagal mengambil data perbaikan", error: error.message });
+    const { laporan_id } = req.params;
+    const perbaikan = await Perbaikan.findOne({ where: { laporan_id } });
+    if (!perbaikan) return res.status(404).json({ message: "Data perbaikan tidak ditemukan." });
+    res.json(perbaikan);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// GET /api/perbaikan
+exports.getAllPerbaikan = async (req, res) => {
+  try {
+    const all = await Perbaikan.findAll({ include: Laporan });
+    res.json(all);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };

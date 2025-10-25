@@ -1,37 +1,31 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
-const User = require("./User");
 const Laporan = require("./Laporan");
 
-const Perbaikan = sequelize.define(
-  "Perbaikan",
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    jenisPerbaikan: {
-      type: DataTypes.ENUM("ganti_baru", "trafo_mobile", "kopel_trafo_sebelah"),
-      allowNull: false,
-    },
-    detail: {
-      type: DataTypes.STRING, // untuk menyimpan pilihan detail (misal KVA / opsi kopel)
-      allowNull: true,
-    },
+const Perbaikan = sequelize.define("Perbaikan", {
+  laporan_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
-  {
-    tableName: "Perbaikan", // ✅ letakkan di sini & camelCase
-    timestamps: true,       // opsional, kalau mau createdAt & updatedAt
-  }
-);
+  jenis_perbaikan: {
+    type: DataTypes.ENUM("gantiTrafo", "gantiTrafoMobile", "kopelTrafoSebelah"),
+    allowNull: false,
+  },
+  kapasitas: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  daftar_trafo: {
+    type: DataTypes.JSON,
+    allowNull: true,
+  },
+  tanggal_input: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+  },
+});
 
-// Relasi dengan User (siapa yang memperbaiki)
-Perbaikan.belongsTo(User, { foreignKey: "userId", as: "user" });
-User.hasMany(Perbaikan, { foreignKey: "userId", as: "perbaikans" });
-
-// Relasi dengan Laporan (laporan mana yang diperbaiki)
-Perbaikan.belongsTo(Laporan, { foreignKey: "laporanId", as: "laporan" });
-Laporan.hasMany(Perbaikan, { foreignKey: "laporanId", as: "perbaikans" });
+Perbaikan.belongsTo(Laporan, { foreignKey: "laporan_id" });
+Laporan.hasOne(Perbaikan, { foreignKey: "laporan_id" });
 
 module.exports = Perbaikan;

@@ -1,13 +1,13 @@
-const PemeriksaanJaringan = require('../models/PemeriksaanJaringan');
-const User = require('../models/User');
-
-// controllers/pemeriksaanController.js
 const Pemeriksaan = require('../models/PemeriksaanJaringan');
 
 // CREATE
 exports.createPemeriksaan = async (req, res) => {
   try {
-    const data = await Pemeriksaan.create(req.body);
+    const payload = {
+      ...req.body,
+      userId: req.user.id, // <-- otomatis terkait user yang login
+    };
+    const data = await Pemeriksaan.create(payload);
     res.status(201).json(data);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -35,54 +35,35 @@ exports.getPemeriksaanById = async (req, res) => {
   }
 };
 
-// Controller UPDATE PemeriksaanJaringan
+// UPDATE
 exports.updatePemeriksaan = async (req, res) => {
-    try {
-      const { id } = req.params;
-  
-      // Cari data berdasarkan ID
-      const data = await Pemeriksaan.findByPk(id);
-      if (!data) {
-        return res.status(404).json({ message: 'Data tidak ditemukan' });
-      }
-  
-      // Filter req.body agar hanya field yang valid yang diupdate
-      const updatableFields = [
-        'no_ba', 'pln_area', 'nama_pekerjaan', 'nama_pelanggan', 'alamat_lokasi',
-        'rayon', 'tanggal', 'spk_sutm', 'spk_sutr', 'spk_gtt',
-        'sutm_as3c', 'sutr_bund_conductor', 'trafo_3ph', 'keterangan',
-        'petugas1','petugas2','petugas3','petugas4','petugas5',
-        'foto1','foto2','foto3'
-      ];
-  
-      const updateData = {};
-      for (let field of updatableFields) {
-        if (req.body[field] !== undefined) {
-          updateData[field] = req.body[field];
-        }
-      }
-  
-      // Update data
-      await data.update(updateData);
-  
-      // Ambil data terbaru setelah update
-      const updatedData = await Pemeriksaan.findByPk(id);
-  
-      // Kirim response
-      res.status(200).json({
-        message: 'Data berhasil diperbarui',
-        data: updatedData
-      });
-  
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        message: 'Terjadi kesalahan saat memperbarui data',
-        error: error.message
-      });
+  try {
+    const { id } = req.params;
+    const data = await Pemeriksaan.findByPk(id);
+    if (!data) return res.status(404).json({ message: 'Data tidak ditemukan' });
+
+    const updatableFields = [
+      'no_ba', 'pln_area', 'nama_pekerjaan', 'nama_pelanggan', 'alamat_lokasi',
+      'rayon', 'tanggal', 'spk_sutm', 'spk_sutr', 'spk_gtt',
+      'sutm_as3c', 'sutr_bund_conductor', 'trafo_3ph', 'keterangan',
+      'petugas1','petugas2','petugas3','petugas4','petugas5',
+      'foto1','foto2','foto3'
+    ];
+
+    const updateData = {};
+    for (let field of updatableFields) {
+      if (req.body[field] !== undefined) updateData[field] = req.body[field];
     }
-  };
-  
+
+    await data.update(updateData);
+    const updatedData = await Pemeriksaan.findByPk(id);
+
+    res.status(200).json({ message: 'Data berhasil diperbarui', data: updatedData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Terjadi kesalahan saat memperbarui data', error: error.message });
+  }
+};
 
 // DELETE
 exports.deletePemeriksaan = async (req, res) => {

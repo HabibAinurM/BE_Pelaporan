@@ -17,7 +17,6 @@ const PemeriksaanJaringan = sequelize.define('PemeriksaanJaringan', {
   sutm_as3c: DataTypes.STRING,
   sutr_bund_conductor: DataTypes.STRING,
   trafo_3ph: DataTypes.STRING,
-  keterangan: DataTypes.TEXT,
 
   // petugas
   petugas1: DataTypes.STRING,
